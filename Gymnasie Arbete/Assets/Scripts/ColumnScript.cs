@@ -62,6 +62,7 @@ public class ColumnScript : MonoBehaviour
 
     void OnSelectExited(SelectExitEventArgs args)
     {
+        //It doesn't react to the object being dropped
         if (floater = null)
         {
             floater = args.interactableObject.colliders.First().gameObject;
