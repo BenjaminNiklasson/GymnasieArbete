@@ -10,19 +10,27 @@ public class ColumnScript : MonoBehaviour
 {
     [SerializeField] GameObject floater;
     XRGrabInteractable floaterInteractable;
-    List<XRGrabInteractable> objOn = new List<XRGrabInteractable>;
+    List<XRGrabInteractable> objOn = new List<XRGrabInteractable>();
+    [SerializeField] Vector3 floatPos;
+    Rigidbody floatRB;
 
     private void Awake()
     {
         floaterInteractable = floater.GetComponent<XRGrabInteractable>();
         floaterInteractable.selectEntered.AddListener(OnSelectEntered);
+        floatPos = transform.position;
+        floatPos += new Vector3(0, 1f);
+        floatRB = floater.GetComponent<Rigidbody>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if ()
+        if(floater != null)
         {
+            floater.transform.Rotate(new Vector3(0, 1));
+            floatRB.linearVelocity = Vector3.zero;
 
+            floater.transform.position = floatPos;
         }
     }
 
@@ -37,10 +45,11 @@ public class ColumnScript : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        XRGrabInteractable leaver = objOn[objOn.IndexOf(other.GetComponentInParent<XRGrabInteractable>())];
+        XRGrabInteractable leaver = other.GetComponentInParent<XRGrabInteractable>();
+        objOn.Remove(leaver);
         if (leaver != null)
         {
-            leaver.selectEntered.RemoveListener(OnSelectEntered);
+            leaver.selectExited.RemoveListener(OnSelectExited);
         }
     }
 
@@ -53,6 +62,12 @@ public class ColumnScript : MonoBehaviour
 
     void OnSelectExited(SelectExitEventArgs args)
     {
-        floater = args.interactableObject.colliders.First().gameObject;
+        if (floater = null)
+        {
+            floater = args.interactableObject.colliders.First().gameObject;
+            floaterInteractable = floater.GetComponent<XRGrabInteractable>();
+            floaterInteractable.selectEntered.AddListener(OnSelectEntered);
+            floatRB = floater.GetComponent<Rigidbody>();
+        }   
     }
 }
